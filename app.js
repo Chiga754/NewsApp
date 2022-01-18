@@ -61,8 +61,8 @@ const newsService = (function () {
   const apiURL = 'https://newsapi.org/v2/'
 
   return {
-    topHeadlines(country = 'ru', cb){
-      http.get(`${apiURL}/top-headlines?country=${country}&category=technology&apiKey=${apiKey}`, cb);
+    topHeadlines(country = 'ru', category = 'business', cb){
+      http.get(`${apiURL}/top-headlines?country=${country}&category=${category}&apiKey=${apiKey}`, cb);
     },
     everything(query, cb){
       http.get(`${apiURL}/everything?q=${query}&apiKey=${apiKey}`, cb);
@@ -74,6 +74,7 @@ const newsService = (function () {
 const form = document.forms['newsControls'];
 const countrySelect = form.elements['country'];
 const searchInput = form.elements['search'];
+const categorySelect = form.elements['сategory'];
 
 form.addEventListener('submit', (e) => {
   e.preventDefault();
@@ -90,10 +91,11 @@ document.addEventListener('DOMContentLoaded', function() {
 // load news function 
 function loadNews(){
   showLoader();
-  const country = countrySelect.value;
+  const countryText = countrySelect.value;
   const searchText = searchInput.value;
+  const categoryText = categorySelect.value;
   if(!searchText){
-    newsService.topHeadlines(country , onGetResponse);
+    newsService.topHeadlines(countryText, categoryText , onGetResponse);
   } else {
     newsService.everything(searchText , onGetResponse);
   }
@@ -141,7 +143,7 @@ function newsTemplate({urlToImage, title, url, description}){
     <div class='col s12'>
       <div class='card'>
         <div class='card-image'>
-          <img src='${urlToImage}'>
+          <img src='${urlToImage || 'images/no_photo.png'}'>
           <span class='card-title'>${title || ''}</span>
         </div>
         <div class='card-content'>
